@@ -1,0 +1,205 @@
+﻿@page
+@using ToDoList.Models
+@model ToDoList.Pages.toDo.IndexModel
+@{
+}
+
+<body>
+<form method="get">
+<div class="mt-5">
+	<div class="row mb-3">
+        <div class="col text-start">
+         <a onclick="ShowModelAddEdit('editModel',@System.Text.Json.JsonSerializer.Serialize(new TaskToDo()),false)" class="btn btn-outline-success px-4 py-2">  Add Task</a>
+        </div>
+        <div class="col-2 text-end">
+        <select class="form-control"  asp-for="@Model.taskQueryParameter.SortOrder" onchange="submit()">
+@*			<option value="-1">Select option</option>
+*@			<option value="asc">A-Z</option>
+			<option value="desc">Z-A</option>
+		</select>
+
+        <select class="form-control mt-2" asp-for="@Model.taskQueryParameter.categoryID"  onchange="submit()" asp-items="@Model.selectedcategory">
+            <option value="-1">Select option</option>
+        </select>
+
+        </div>
+	</div>
+	<div>
+		<table class="table table-responsive table-hover">
+   <thead>
+    <tr>
+      <th scope="col">#ID</th>
+      <th scope="col">Title</th>
+      <th scope="col">Description</th>
+      <th scope="col">Date</th>
+      <th scope="col">IsCompleted</th>
+      <th scope="col">Manage</th>
+    </tr>
+  </thead>
+  <tbody>
+      @foreach(var item in @Model.tasks)
+{
+    <tr>
+      <th>@item.Id</th>
+      <td>@item.title</td>
+      <td>@item.description</td>
+      <td>@item.Date?.ToString("dd-MM-yy")</td>
+      @if(@item.IsCompleted==0){
+           <td><img src="~/images/false.png"/></td>
+      }
+      else{
+           <td><img src="~/images/true.png"/></td>
+      }
+     <td>
+      <a class="btn btn-outline-primary" onclick="ShowModelAddEdit('editModel',@System.Text.Json.JsonSerializer.Serialize(item),true)"> Edit</a> |
+       <form method="post" asp-page-handler="Delete" asp-route-id="@item.Id"class="d-inline">
+        <a onclick="DeleteConfirm(this);" class="btn btn-outline-danger" >Delete</a>
+      </form>
+
+     </td>
+    </tr>	
+}
+  </tbody>
+</table>
+	</div>
+</div>
+</form>
+</body>
+
+<div class="modal fade" id="editModel" tabindex="-1" aria-labelledby="editLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editLabel"> </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div> 
+            <form id="frmCRUD" method="post">
+                <div class="modal-body">
+                       <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="task.Id" class="control-label"></label>
+                            <input asp-for="task.Id"  class="form-control" />
+                            <span  asp-validation-for="task.Id" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="task.title"  class="control-label"></label>
+                            <input asp-for="task.title" class="form-control" />
+                            <span asp-validation-for="task.title"  class="text-danger"></span>
+                        </div>
+                          <div class="form-group">
+                            <label asp-for="task.description"  class="control-label"></label>
+                            <input asp-for="task.description" class="form-control" />
+                            <span asp-validation-for="task.description"  class="text-danger"></span>
+                        </div>
+                          <div class="form-group">
+                            <label asp-for="task.IsCompleted"  class="control-label"></label>
+                            <input asp-for="task.IsCompleted" class="form-control" />
+                            <span asp-validation-for="task.IsCompleted"  class="text-danger"></span>
+                        </div>
+                           <div class="form-group">
+                            <label asp-for="task.Date"  class="control-label"></label>
+                            <input asp-for="task.Date" class="form-control" />
+                            <span asp-validation-for="task.Date"  class="text-danger"></span>
+                        </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button id="ptnedit" type="submit" class="btn btn-primary" asp-page-handler="Edit">Save</button>
+                    <button id="ptnadd"  type="submit" class="btn btn-primary" asp-page-handler="Add">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+     <script>
+
+        function ShowModelAddEdit(modelid,dataObj,isedit=false)
+        {
+            let modelElm = document.getElementById(modelid);
+            var myModal = new bootstrap.Modal(modelElm, {
+                keyboard: false
+            })
+            console.log(dataObj)
+                if(dataObj!==null)
+                {                       
+                    modelElm.querySelector('#task_Id').value = dataObj.Id;
+                   
+                    modelElm.querySelector('#task_title').value = dataObj.title;
+
+                    modelElm.querySelector('#task_description').value = dataObj.description;
+                    modelElm.querySelector('#task_IsCompleted').value = dataObj.IsCompleted;
+                        
+                    try{
+                        if( modelElm.querySelector('#task_Date')!==null)
+                        if (dataObj.Date===null)
+                            modelElm.querySelector('#task_Date').valueAsDate = null;
+                        else
+                        {
+                            let dateofbirth = new Date(dataObj.Date);
+                            dateofbirth.setDate(dateofbirth.getDate() + 1);
+                            modelElm.querySelector('#task_Date').valueAsDate = dateofbirth;
+                        }
+                    }catch(e){
+                        alert(e)
+                    }
+                }
+          
+                toggleModelAction(modelElm,isedit);
+            
+            myModal.toggle()
+        }
+
+                function toggleModelAction(modelElm,isedit) {
+                if (isedit === true) {
+                    modelElm.querySelector('#ptnadd').hidden = true;
+                    modelElm.querySelector('#ptnedit').hidden = false;
+                    modelElm.querySelector('div.modal-header h5.modal-title').innerHTML = "Edit Task";
+              
+                    modelElm.querySelector('#task_Id').readOnly = true;
+                    modelElm.querySelector('#task_Id').style.color = "#c0c0c0";
+
+                }
+                else {
+                    modelElm.querySelector('#ptnadd').hidden = false;
+                    modelElm.querySelector('#ptnedit').hidden = true;
+                    modelElm.querySelector('div.modal-header h5.modal-title').innerHTML = "Add Task";
+                    modelElm.querySelector('#task_Id').readOnly = false;
+                    modelElm.querySelector('#task_Id').style.color = "#000";
+                }
+            }
+
+        function DeleteConfirm(tagElm){
+         let delForm=tagElm.parentElement|| null;
+        Swal.fire({
+         title: 'Are you sure?',
+         text: "You won't be able to revert this!",
+         icon: 'warning',
+         showCancelButton: true,
+         confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+     if(delForm!==null){
+         delForm.submit();
+     }
+    Swal.fire(
+      'Deleted!',
+      'Your file has been deleted.',
+      'success'
+    )
+  }
+
+})
+    }
+        </script>
+}
+
