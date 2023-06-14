@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using ToDoList.Models
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -7,6 +8,9 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ToDoList.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <link rel=”stylesheet” href=”https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css”/>
+
 </head>
 <body>
     <header>
@@ -29,6 +33,23 @@
                             <a class="nav-link text-dark" asp-area="" asp-page="/toDo/Index">To-Do List</a>
                         </li>
                     </ul>
+
+                    <ul class="navbar-nav">
+                        @if (@authFun.currentUser == null)
+                        {
+                           <li style="list-style:none;"></li>
+                        }
+                        else
+                        {
+                           
+                          <li style="list-style:none;" class="fw-bold mt-2">@authFun.currentUser.email</li>
+                           <li style="list-style:none;">
+                             <form class="form-inline"  asp-page="/Auth/Logout"  method="post" >
+                              <button  type="submit" class="btn btn-outline-danger m-1">Logout!</button>
+                             </form>
+                            </li>
+                        }
+                    </ul>
                 </div>
             </div>
         </nav>
@@ -48,7 +69,14 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-
+        <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+      AOS.init({
+        duration: 3000,
+        once: true,
+      });
+    </script>
+   
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

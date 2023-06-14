@@ -19,9 +19,12 @@ namespace ToDoList.Pages.toDo
 
         public List<SelectListItem> selectedcategory { get; set; } = default!;
 
+        public Users CurrentUser { get; set; }
+
         public List<TaskToDo>? tasks { get; set; }
         public void OnGet()
         {
+            CurrentUser = authFun.currentUser;
             selectedcategory = categories.Select(x => new SelectListItem() { Value = x.Id.ToString(), Text = x.Name }).ToList();
             // tasks = List.GetData(1);
             //  tasks = List.SortOrder(taskQueryParameter.SortOrder);

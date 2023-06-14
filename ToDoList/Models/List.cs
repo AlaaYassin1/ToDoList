@@ -181,14 +181,14 @@ namespace ToDoList.Models
                 cmd.Transaction = CmdTrans;
                 cmd.CommandType = CommandType.Text;
                 var cmdText = @"INSERT INTO TASK (ID, TITLE, COLUMN1, TASKDATE, COLUMN2) 
-				                VALUES (:id,:title,:des,'2023/10/02',:isComp)";
+				                VALUES (Task_seq.nextval,:title,:des,:dateTask,:isComp)";
                 cmd.CommandText = cmdText;
 
-                cmd.Parameters.Add("id", task.Id);
+                // cmd.Parameters.Add("id", task.Id);
                 cmd.Parameters.Add("title", task.title);
                 cmd.Parameters.Add("des", task.description);
+                cmd.Parameters.Add("dateTask", task.Date);
                 cmd.Parameters.Add("isComp", task.IsCompleted);
-                //  cmd.Parameters.Add("date", task.Date);
 
                 r = cmd.ExecuteNonQuery();
                 CmdTrans.Commit();

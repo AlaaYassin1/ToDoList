@@ -3,32 +3,182 @@
 @model ToDoList.Pages.toDo.IndexModel
 @{
 }
+<head>
+<style>
+ .header {
+  padding: 20px 0;
+}
+.header .logo {
+  line-height: 0;
+  text-decoration: none;
+}
+
+.header .logo img {
+  max-height: 40px;
+  margin-right: 6px;
+}
+
+.header .logo span {
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #080808;
+  font-family: sans-serif;
+  margin-top: 3px;
+}
+.navbar {
+  padding: 0;
+}
+.navbar ul {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  list-style: none;
+  align-items: center;
+}
+
+.navbar li {
+  position: relative;
+}
+.navbar a,
+.navbar a:focus {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0 10px 30px;
+  font-family: sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0d0d0e;
+  white-space: nowrap;
+
+}
+
+.navbar a i,
+.navbar a:focus i {
+  font-size: 12px;
+  line-height: 0;
+  margin-left: 5px;
+}
+
+.navbar a:hover,
+.navbar .active,
+.navbar .active:focus,
+.navbar li:hover>a {
+  color: #964DF4;
+}
+
+.navbar .Registerbtn{
+    color: #fff;
+}
+
+.btnGetStart{
+    border-color: #8145F2;
+    background-color: #fff;
+}
+
+.btnGetStart:hover,
+.btnGetStart:focus
+{
+background-color: #964DF4;
+color: #fff;
+}
+
+</style>
+</head>
 
 <body>
-<form method="get">
-<div class="mt-5">
-	<div class="row mb-3">
-        <div class="col text-start">
-         <a onclick="ShowModelAddEdit('editModel',@System.Text.Json.JsonSerializer.Serialize(new TaskToDo()),false)" class="btn btn-outline-success px-4 py-2">  Add Task</a>
+
+   <header class="header">
+        <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+            <a href="#" class="logo d-flex align-items-center">
+                <img src="~/images/logotask1.jpg"/>
+                <span>Task It</span>
+            </a>
+            <nav id="navbar" class="navbar">
+                <ul>
+                  <li><a class="nav-link  active" href="#">Home</a></li>
+                  <li><a class="nav-link " href="#">About</a></li>
+                  <li><a class="nav-link " href="#">Contact</a></li>
+                  <li><a class="nav-link " asp-page="/Auth/Login">Login</a></li>
+                  <li style="background: #964DF4;text-align: center; margin-left:10px; " class="btn "><a class="Registerbtn" style="padding: 2px; text-decoration: none; color: #fff;" asp-page="/Auth/Register">Register</a></li>
+                </ul>
+                <i class="bi bi-list mobile-nav-toggle"></i>
+              </nav>
+
+        </div> 
+       
+    </header>
+    
+    <section  class="d-flex align-items-center">
+
+        <div class="container">
+          <div class="row mt-4">
+            <div class="col-lg-6 d-flex flex-column justify-content-center" data-aos="zoom-in">
+              <h1 style="font-weight: bold; color: #8145F2;">Daily Task Managment</h1>
+              <h2 class="mt-2 py-3 lh-3">Say hello to Task It, an app that will help you to handle your process and project. With mininalistic and easy to understand style of design.</h2>
+              <div>
+                <div class="text-center text-lg-start mt-3"  data-aos="zoom-in">
+                  <a href="#" class="btn btnGetStart d-inline-flex align-items-center justify-content-center align-self-start " >
+                    Get Started
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6 "  data-aos="zoom-in">
+              <img src="~/images/task2.jpg" class="img-fluid" alt="">
+            </div>
+          </div>
         </div>
-        <div class="col-2 text-end">
-        <select class="form-control"  asp-for="@Model.taskQueryParameter.SortOrder" onchange="submit()">
+    
+      </section>
+
+    @if (authFun.currentUser != null)
+    {
+        <form method="get">
+<div class="mt-5">
+
+         <section class="vh-100" style="background-color: #eee;">
+             	<div class="row p-5">
+                   
+                      <div class="col text-start">
+                    @if (authFun.currentUser.IsAdmin == 1)
+                    {
+                        <a onclick="ShowModelAddEdit('editModel',@System.Text.Json.JsonSerializer.Serialize(new TaskToDo()),false)" class="btn btn-outline-success px-4 py-2">  Add Task</a>
+                    } 
+                    </div>
+                 
+                 
+        <div class="col-4 text-end d-flex">
+        <select class="form-control me-3"  asp-for="@Model.taskQueryParameter.SortOrder" onchange="submit()">
 @*			<option value="-1">Select option</option>
 *@			<option value="asc">A-Z</option>
 			<option value="desc">Z-A</option>
 		</select>
 
-        <select class="form-control mt-2" asp-for="@Model.taskQueryParameter.categoryID"  onchange="submit()" asp-items="@Model.selectedcategory">
+        <select class="form-control ms-2" asp-for="@Model.taskQueryParameter.categoryID"  onchange="submit()" asp-items="@Model.selectedcategory">
             <option value="-1">Select option</option>
         </select>
 
         </div>
 	</div>
+  <div class="container ">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-md-12 col-xl-10">
+
+        <div class="card">
+          <div class="card-header p-3">
+            <h5 class="mb-0"><i class="fas fa-tasks me-2"></i>Task List</h5>
+          </div>
+       
+
 	<div>
+
+
 		<table class="table table-responsive table-hover">
    <thead>
     <tr>
-      <th scope="col">#ID</th>
+      <th scope="col">ID</th>
       <th scope="col">Title</th>
       <th scope="col">Description</th>
       <th scope="col">Date</th>
@@ -50,20 +200,33 @@
       else{
            <td><img src="~/images/true.png"/></td>
       }
+         @if (authFun.currentUser.IsAdmin == 1)
+          {
      <td>
       <a class="btn btn-outline-primary" onclick="ShowModelAddEdit('editModel',@System.Text.Json.JsonSerializer.Serialize(item),true)"> Edit</a> |
        <form method="post" asp-page-handler="Delete" asp-route-id="@item.Id"class="d-inline">
         <a onclick="DeleteConfirm(this);" class="btn btn-outline-danger" >Delete</a>
       </form>
-
      </td>
+            }
+             else{
+                <td> </td>
+               }
     </tr>	
 }
   </tbody>
 </table>
 	</div>
+       </div>
+          </div>
+          </div>
+          </div>
+          </section>
 </div>
 </form>
+    }
+
+
 </body>
 
 <div class="modal fade" id="editModel" tabindex="-1" aria-labelledby="editLabel" aria-hidden="true">
@@ -77,10 +240,10 @@
                 <div class="modal-body">
                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <div class="form-group">
-                            <label asp-for="task.Id" class="control-label"></label>
-                            <input asp-for="task.Id"  class="form-control" />
-                            <span  asp-validation-for="task.Id" class="text-danger"></span>
-                        </div>
+@*                            <label asp-for="task.Id" class="control-label"></label>
+*@                            <input hidden asp-for="task.Id"  class="form-control" />
+@*                            <span  asp-validation-for="task.Id" class="text-danger"></span>
+*@                        </div>
                         <div class="form-group">
                             <label asp-for="task.title"  class="control-label"></label>
                             <input asp-for="task.title" class="form-control" />
@@ -98,7 +261,7 @@
                         </div>
                            <div class="form-group">
                             <label asp-for="task.Date"  class="control-label"></label>
-                            <input asp-for="task.Date" class="form-control" />
+                            <input asp-for="task.Date" class="form-control" type="date"/>
                             <span asp-validation-for="task.Date"  class="text-danger"></span>
                         </div>
 
@@ -118,7 +281,6 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
      <script>
 
         function ShowModelAddEdit(modelid,dataObj,isedit=false)

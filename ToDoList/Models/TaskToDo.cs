@@ -12,7 +12,7 @@ namespace ToDoList.Models
         public string description { get; set; }
 
         [Required]
-        [DataType(DataType.Date)]
+
         public DateTime? Date { get; set; }
 
         public int IsCompleted { get; set; }
