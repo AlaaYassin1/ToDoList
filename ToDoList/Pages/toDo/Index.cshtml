@@ -133,19 +133,14 @@ color: #fff;
     
       </section>
 
-    @if (authFun.currentUser != null)
-    {
+   
         <form method="get">
 <div class="mt-5">
 
-         <section class="vh-100" style="background-color: #eee;">
+       
              	<div class="row p-5">
-                   
                       <div class="col text-start">
-                    @if (authFun.currentUser.IsAdmin == 1)
-                    {
                         <a onclick="ShowModelAddEdit('editModel',@System.Text.Json.JsonSerializer.Serialize(new TaskToDo()),false)" class="btn btn-outline-success px-4 py-2">  Add Task</a>
-                    } 
                     </div>
                  
                  
@@ -200,18 +195,14 @@ color: #fff;
       else{
            <td><img src="~/images/true.png"/></td>
       }
-         @if (authFun.currentUser.IsAdmin == 1)
-          {
+        
      <td>
       <a class="btn btn-outline-primary" onclick="ShowModelAddEdit('editModel',@System.Text.Json.JsonSerializer.Serialize(item),true)"> Edit</a> |
        <form method="post" asp-page-handler="Delete" asp-route-id="@item.Id"class="d-inline">
         <a onclick="DeleteConfirm(this);" class="btn btn-outline-danger" >Delete</a>
       </form>
      </td>
-            }
-             else{
-                <td> </td>
-               }
+    
     </tr>	
 }
   </tbody>
@@ -221,10 +212,33 @@ color: #fff;
           </div>
           </div>
           </div>
-          </section>
+
 </div>
 </form>
-    }
+    
+
+
+
+ <section class="mt-5">
+  <footer class="text-center text-white" style="background-color: #964DF4;">
+    <div class="container p-4 pb-0">
+      <section class="">
+        <p class="d-flex justify-content-center align-items-center">
+          <span class="me-3">Register for free</span>
+          <button type="button" class="btn btn-outline-light btn-rounded" >
+              <a asp-page="/Auth/Register" style="list-style:none;" class="text-dark">
+               Sign up!    
+              </a>
+          </button>
+        </p>
+      </section>
+    </div>
+    <div class="text-center p-3" style="background-color:#964DF4;">
+      © 2023 Copyright:
+      <a class="text-white" >Alaa Yassin</a>
+    </div>
+  </footer>
+</section>
 
 
 </body>

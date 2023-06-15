@@ -9,7 +9,7 @@
         public string email { get; set; }
         public string Password { get; set; }
 
-        public int IsAdmin { get; set; }
+        public char IsAdmin { get; set; }
 
 
 

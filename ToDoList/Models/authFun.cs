@@ -136,6 +136,7 @@ namespace ToDoList.Models
                         string fname = dt.Rows[i]["FIRSTNAME"].ToString();
                         string lname = dt.Rows[i]["LASTNAME"].ToString();
                         string pass = dt.Rows[i]["PASSWORD"].ToString();
+                        //  char isAdmin = Convert.ToChar(dt.Rows[i]["ISADMIN"]);
 
                         lst.Add(new Users() { Id = id, email = email, fName = fname, lName = lname, Password = pass });
 
