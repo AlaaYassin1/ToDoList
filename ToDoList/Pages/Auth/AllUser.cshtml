@@ -1,0 +1,19 @@
+﻿@page
+@model ToDoList.Pages.Auth.AllUserModel
+@{
+}
+<div>
+	<div class="row">
+		<div class="col-3">
+	@foreach(var item in @Model.userslst){
+	<p>@item.email</p>
+	}
+	</div>
+	<div class="col-3">
+	@foreach(var item in @Model.roleList){
+		<p> @item.commandType</p>
+	}
+	</div>
+
+</div>
+</div>
