@@ -326,7 +326,6 @@ namespace ToDoList.Models
             currenUserRole.Clear();
             foreach (Screen screen in screens)
             {
-
                 if (screen.Id == id)
                 {
                     r = 1; // it means there is permissions in this page
@@ -348,14 +347,11 @@ namespace ToDoList.Models
                                     currenUserRole.Add(userRole);
                                 }
                             }
-
                         }
                     }
                     else { return r = 0; } //you must sign in..!
                 }
-
             }
-
             return r;
         }
 

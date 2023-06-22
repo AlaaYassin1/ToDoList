@@ -10,7 +10,7 @@ namespace ToDoList.Models
         static OracleConnection aOracleConnection;
 
 
-        public static List<TaskToDo> GetData(int id)
+        public static PriorityQueue<TaskToDo, int> GetData(int id)
         {
             Open();
             OracleTransaction CmdTrans = aOracleConnection.BeginTransaction(IsolationLevel.ReadCommitted);
@@ -129,14 +129,15 @@ namespace ToDoList.Models
             {
                 return null;
             }
-            finally
+
             {
                 Close();
             }
         }
-        public static List<TaskToDo> GetData(int ID, OracleTransaction CmdTrans, OracleConnection aOracleConnection)
+        public static PriorityQueue<TaskToDo, int> GetData(int ID, OracleTransaction CmdTrans, OracleConnection aOracleConnection)
         {
             List<TaskToDo> lst = new List<TaskToDo>();
+            PriorityQueue<TaskToDo, int> queue = new PriorityQueue<TaskToDo, int>();
 
             try
             {
@@ -158,13 +159,15 @@ namespace ToDoList.Models
                         DateTime TASKDATE = Convert.ToDateTime(dt.Rows[i]["TASKDATE"].ToString());
                         int id = Convert.ToInt32(dt.Rows[i]["Id"].ToString());
                         int isCompleted = Convert.ToInt32(dt.Rows[i]["COLUMN2"].ToString());
+                        int priority = Convert.ToInt32(dt.Rows[i]["PRIORITY"].ToString());
                         string Desc = dt.Rows[i]["COLUMN1"].ToString();
 
-                        lst.Add(new TaskToDo() { Id = id, title = title, Date = TASKDATE, description = Desc, IsCompleted = isCompleted });
+                        queue.Enqueue(new TaskToDo() { Id = id, title = title, Date = TASKDATE, description = Desc, IsCompleted = isCompleted, priority = priority }, priority);
+                        //   lst.Add(new TaskToDo() { Id = id, title = title, Date = TASKDATE, description = Desc, IsCompleted = isCompleted,priority= priority });
 
                     }
                 }
-                return lst;
+                return queue;
             }
             catch (Exception ex)
             {
@@ -180,8 +183,8 @@ namespace ToDoList.Models
                 OracleCommand cmd = aOracleConnection.CreateCommand();
                 cmd.Transaction = CmdTrans;
                 cmd.CommandType = CommandType.Text;
-                var cmdText = @"INSERT INTO TASK (ID, TITLE, COLUMN1, TASKDATE, COLUMN2) 
-				                VALUES (Task_seq.nextval,:title,:des,:dateTask,:isComp)";
+                var cmdText = @"INSERT INTO TASK (ID, TITLE, COLUMN1, TASKDATE, COLUMN2,CATEGORYID,PRIORITY) 
+				                VALUES (Task_seq.nextval,:title,:des,:dateTask,:isComp,:catId,:priority)";
                 cmd.CommandText = cmdText;
 
                 // cmd.Parameters.Add("id", task.Id);
@@ -189,6 +192,8 @@ namespace ToDoList.Models
                 cmd.Parameters.Add("des", task.description);
                 cmd.Parameters.Add("dateTask", task.Date);
                 cmd.Parameters.Add("isComp", task.IsCompleted);
+                cmd.Parameters.Add("catId", 3);
+                cmd.Parameters.Add("priority", 3);
 
                 r = cmd.ExecuteNonQuery();
                 CmdTrans.Commit();
@@ -337,6 +342,7 @@ namespace ToDoList.Models
         public static List<TaskToDo> filterByCategory(string order, int Catid, OracleTransaction CmdTrans, OracleConnection aOracleConnection)
         {
             List<TaskToDo> lst = new List<TaskToDo>();
+            PriorityQueue<TaskToDo, int> queue = new PriorityQueue<TaskToDo, int>();
 
             try
             {
@@ -378,8 +384,18 @@ namespace ToDoList.Models
                         int id = Convert.ToInt32(dt.Rows[i]["Id"].ToString());
                         int isCompleted = Convert.ToInt32(dt.Rows[i]["COLUMN2"].ToString());
                         string Desc = dt.Rows[i]["COLUMN1"].ToString();
+                        int priority = Convert.ToInt32(dt.Rows[i]["PRIORITY"].ToString());
+                        int catId = Convert.ToInt32(dt.Rows[i]["CATEGORYID"].ToString());
 
-                        lst.Add(new TaskToDo() { Id = id, title = title, Date = TASKDATE, description = Desc, IsCompleted = isCompleted });
+
+                        queue.Enqueue(new TaskToDo() { Id = id, title = title, Date = TASKDATE, description = Desc, IsCompleted = isCompleted, CategoryId = catId, priority = priority }, priority);
+
+
+                    }
+                    while (queue.Count > 0)
+                    {
+                        var que = queue.Dequeue();
+                        lst.Add(new TaskToDo() { Id = que.Id, title = que.title, Date = que.Date, description = que.description, IsCompleted = que.IsCompleted, CategoryId = que.CategoryId, priority = que.priority });
 
                     }
                 }

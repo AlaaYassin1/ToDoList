@@ -16,6 +16,7 @@ namespace ToDoList.Models
         public DateTime? Date { get; set; }
 
         public int IsCompleted { get; set; }
+        public int priority { get; set; }
         public int CategoryId { get; set; }
         public virtual Category? Category { get; set; }
 

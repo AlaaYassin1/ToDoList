@@ -5,7 +5,6 @@
         var parms = new Dictionary<string, string>
     {
         {"CurPage",@Model.taskQueryParameter.CurPage.ToString()},
-
         {"Size",@Model.taskQueryParameter.Size.ToString()}
     };
 
@@ -60,7 +59,6 @@
   white-space: nowrap;
 
 }
-
 .navbar a i,
 .navbar a:focus i {
   font-size: 12px;
@@ -90,6 +88,11 @@
 background-color: #964DF4;
 color: #fff;
 }
+.w3-container, .w3-panel {
+    padding: 6px 19px;
+}
+
+
 
 </style>
 </head>
@@ -190,12 +193,16 @@ color: #fff;
       <th scope="col">Description</th>
       <th scope="col">Date</th>
       <th scope="col">IsCompleted</th>
+      <th scope="col">priority</th>
       <th scope="col">Manage</th>
     </tr>
   </thead>
   <tbody>
+@*       @for(var i=0; i < @Model.tasks.Count; i++)
+ {
+   var item = @Model.tasks.Dequeue();  *@
       @foreach(var item in @Model.tasks)
-        {
+       {
     <tr>
       <th>@item.Id</th>
       <td>@item.title</td>
@@ -207,6 +214,9 @@ color: #fff;
       else{
            <td><img src="~/images/true.png"/></td>
       }
+      <td>
+        @item.priority
+          </td>
      <td>
          @if (authFun.currenUserRole != null)
           {
@@ -228,25 +238,19 @@ color: #fff;
                          <a onclick="DeleteConfirm(this);" class="btn btn-outline-danger" >Delete</a>
                    </form>
                   }
-
-                   }
-
-                 }
+                }
+               }
        </td>
     </tr>	
 }
   </tbody>
 </table>
-
- 
 	</div>
- 
-
        </div>
           </div>
 
           </div>      
-          <div class="my-3 d-flex justify-content-center align-content-center">
+        @*  <div class="my-3 d-flex justify-content-center align-content-center">
           @{
 
         var prev = Model.PageResult.PreviousePage.HasValue ? "" : "disabled ";
@@ -292,7 +296,7 @@ color: #fff;
     </div>
  
 
-          </div>
+          </div>*@
 </div>
 
 
